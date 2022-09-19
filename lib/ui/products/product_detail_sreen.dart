@@ -10,13 +10,14 @@ class ProductDetailScreen extends StatelessWidget {
 
   final Product product;
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
       ),
       body: SingleChildScrollView(
-          child: Column(
+        child: Column(
         children: <Widget>[
           SizedBox(
             height: 300,

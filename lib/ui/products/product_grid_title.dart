@@ -12,6 +12,7 @@ class ProductGridTitle extends StatelessWidget {
 
   final Product product;
 
+  @override
   Widget build(BuildContext context) {
     return ClipRRect(
         borderRadius: BorderRadius.circular(10),
