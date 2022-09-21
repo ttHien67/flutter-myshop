@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:myshop/ui/screens.dart';
 
 import 'products_grid.dart';
+
+import '../shared/app_drawer.dart';
 
 enum FilterOptions { favorites, all }
 
@@ -22,6 +25,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           buildShoppingCartIcon(),
         ],
       ),
+      drawer: const AppDrawer(),
       body: ProductsGrid(_showOnlyFavorite),
     );
   }
@@ -32,7 +36,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         Icons.shopping_cart,
       ),
       onPressed: () {
-        print('Go to cart screen');
+        Navigator.of(context).pushNamed(CartScreen.routeName);
       },
     );
   }
@@ -43,7 +47,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         setState(() {
           if (selectedValue == FilterOptions.favorites) {
             _showOnlyFavorite = true;
-          }else {
+          } else {
             _showOnlyFavorite = false;
           }
         });
@@ -53,7 +57,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
       ),
       itemBuilder: (ctx) => [
         const PopupMenuItem(
-          value:  FilterOptions.favorites,
+          value: FilterOptions.favorites,
           child: Text('Only Favorites'),
         ),
         const PopupMenuItem(

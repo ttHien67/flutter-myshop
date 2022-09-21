@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../../models/product.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  const ProductDetailScreen(
-    this.product, {
-    super.key
-  });
+  static const routeName = '/product-detail';
+  const ProductDetailScreen(this.product, {super.key});
 
   final Product product;
 
@@ -17,7 +15,7 @@ class ProductDetailScreen extends StatelessWidget {
         title: Text(product.title),
       ),
       body: SingleChildScrollView(
-        child: Column(
+          child: Column(
         children: <Widget>[
           SizedBox(
             height: 300,
