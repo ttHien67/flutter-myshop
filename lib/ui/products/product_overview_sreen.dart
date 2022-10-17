@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:myshop/ui/screens.dart';
 
 import 'products_grid.dart';
 
 import '../shared/app_drawer.dart';
+
+import '../cart/cart_manager.dart';
+import 'top_right_badge.dart';
 
 enum FilterOptions { favorites, all }
 
@@ -16,6 +20,7 @@ class ProductOverviewScreen extends StatefulWidget {
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyFavorite = false;
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -31,17 +36,6 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   }
 
   Widget buildProductFilterMenu() {
-    return IconButton(
-      icon: const Icon(
-        Icons.shopping_cart,
-      ),
-      onPressed: () {
-        Navigator.of(context).pushNamed(CartScreen.routeName);
-      },
-    );
-  }
-
-  Widget buildShoppingCartIcon() {
     return PopupMenuButton(
       onSelected: (FilterOptions selectedValue) {
         setState(() {
@@ -52,19 +46,33 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           }
         });
       },
-      icon: const Icon(
+      icon:  const Icon(
         Icons.more_vert,
       ),
       itemBuilder: (ctx) => [
         const PopupMenuItem(
           value: FilterOptions.favorites,
-          child: Text('Only Favorites'),
+          child:  Text('Only Favorites'),
         ),
         const PopupMenuItem(
           value: FilterOptions.all,
-          child: Text('Show All'),
+          child: Text('Show all'),
         )
       ],
+    );
+  }
+
+  Widget buildShoppingCartIcon() {
+    return TopRightBagde(
+      data: CartManager().productCount,
+      child: IconButton(
+        icon: const Icon(
+          Icons.shopping_cart,
+        ),
+        onPressed: () {
+          Navigator.of(context).pushNamed(CartScreen.routeName);
+        },
+      ),
     );
   }
 }
