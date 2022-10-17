@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:myshop/ui/screens.dart';
+import 'package:provider/provider.dart';
 
 import 'products_grid.dart';
 
@@ -46,13 +47,13 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           }
         });
       },
-      icon:  const Icon(
+      icon: const Icon(
         Icons.more_vert,
       ),
       itemBuilder: (ctx) => [
         const PopupMenuItem(
           value: FilterOptions.favorites,
-          child:  Text('Only Favorites'),
+          child: Text('Only Favorites'),
         ),
         const PopupMenuItem(
           value: FilterOptions.all,
@@ -63,16 +64,18 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   }
 
   Widget buildShoppingCartIcon() {
-    return TopRightBagde(
-      data: CartManager().productCount,
-      child: IconButton(
-        icon: const Icon(
-          Icons.shopping_cart,
+    return Consumer<CartManager>(builder: (ctx, cartManager, child) {
+      return TopRightBagde(
+        data: cartManager.productCount,
+        child: IconButton(
+          icon: const Icon(
+            Icons.shopping_cart,
+          ),
+          onPressed: () {
+            Navigator.of(context).pushNamed(CartScreen.routeName);
+          },
         ),
-        onPressed: () {
-          Navigator.of(context).pushNamed(CartScreen.routeName);
-        },
-      ),
-    );
+      );
+    });
   }
 }
