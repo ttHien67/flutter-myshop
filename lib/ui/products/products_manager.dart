@@ -45,18 +45,13 @@ class ProductsManager with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  // void addProduct(Product product) {
-  //   _items.add(product.copyWith(
-  //     id: 'p${DateTime.now().toIso8601String()}',
-  //   ));
-  //   notifyListeners();
-  // }
-
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     final index = _items.indexWhere((item) => item.id == product.id);
     if (index >= 0) {
-      _items[index] = product;
-      notifyListeners();
+      if (await _productsService.updateProduct(product)) {
+        _items[index] = product;
+        notifyListeners();
+      }
     }
   }
 
@@ -65,9 +60,15 @@ class ProductsManager with ChangeNotifier {
     product.isFavorite = !savedStatus;
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
     final index = _items.indexWhere((item) => item.id == id);
+    Product? existingproduct = _items[index];
     _items.removeAt(index);
     notifyListeners();
+
+    if (!await _productsService.deleteProduct(id)) {
+      _items.insert(index, existingproduct);
+      notifyListeners();
+    }
   }
 }
