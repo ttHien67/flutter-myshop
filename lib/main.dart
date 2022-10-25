@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myshop/models/auth_token.dart';
 import './ui/screens.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +20,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => AuthManager(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AuthManager, ProductsManager>(
           create: (ctx) => ProductsManager(),
+          update: (ctx, authManager, productsManager) {
+            productsManager!.authToken = authManager.authToken;
+            return productsManager;
+          },
         ),
         ChangeNotifierProvider(
           create: (ctx) => CartManager(),
@@ -29,50 +34,47 @@ class MyApp extends StatelessWidget {
           create: (ctx) => OrdersManager(),
         ),
       ],
-      child: Consumer<AuthManager>(
-        builder: (ctx, authManager, child) {
-          return MaterialApp(
-            title: 'My Shop',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              fontFamily: 'Lato',
-              colorScheme: ColorScheme.fromSwatch(
-                primarySwatch: Colors.purple,
-              ).copyWith(
-                secondary: Colors.deepOrange,
-              ),
+      child: Consumer<AuthManager>(builder: (ctx, authManager, child) {
+        return MaterialApp(
+          title: 'My Shop',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: 'Lato',
+            colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: Colors.purple,
+            ).copyWith(
+              secondary: Colors.deepOrange,
             ),
-            home: authManager.isAuth
+          ),
+          home: authManager.isAuth
               ? const ProductOverviewScreen()
               : FutureBuilder(
-                future: authManager.tryAutoLogin(),
-                builder: ((context, snapshot) {
-                  return snapshot.connectionState == ConnectionState.waiting
-                      ? const SplashScreen()
-                      : const AuthScreen();
-                })
-              ),
-            routes: {
-              CartScreen.routeName: (ctx) => const CartScreen(),
-              OrdersScreen.routeName: (ctx) => const OrdersScreen(),
-              UserProductsScreen.routeName: (ctx) => const UserProductsScreen(),
-            },
-            onGenerateRoute: (settings) {
-              if (settings.name == EditProductScreen.routeName) {
-                final productId = settings.arguments as String?;
-                return MaterialPageRoute(builder: (ctx) {
-                  return EditProductScreen(
-                    productId != null
-                        ? ctx.read<ProductsManager>().findById(productId)
-                        : null,
-                  );
-                });
-              }
-              return null;
-            },
-          );
-        }
-      ),
+                  future: authManager.tryAutoLogin(),
+                  builder: ((context, snapshot) {
+                    return snapshot.connectionState == ConnectionState.waiting
+                        ? const SplashScreen()
+                        : const AuthScreen();
+                  })),
+          routes: {
+            CartScreen.routeName: (ctx) => const CartScreen(),
+            OrdersScreen.routeName: (ctx) => const OrdersScreen(),
+            UserProductsScreen.routeName: (ctx) => const UserProductsScreen(),
+          },
+          onGenerateRoute: (settings) {
+            if (settings.name == EditProductScreen.routeName) {
+              final productId = settings.arguments as String?;
+              return MaterialPageRoute(builder: (ctx) {
+                return EditProductScreen(
+                  productId != null
+                      ? ctx.read<ProductsManager>().findById(productId)
+                      : null,
+                );
+              });
+            }
+            return null;
+          },
+        );
+      }),
     );
   }
 }
